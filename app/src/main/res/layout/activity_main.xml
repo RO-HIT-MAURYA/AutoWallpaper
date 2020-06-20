@@ -38,6 +38,7 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:elevation="2dp"
             android:background="?android:attr/windowBackground"
             app:menu="@menu/bottom_menu"

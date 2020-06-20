@@ -12,6 +12,9 @@ import org.json.JSONObject
 
 class RecyclerViewAdapter(private val context: Context, private val iFace : MainActivity.Interface) :
     RecyclerView.Adapter<RecyclerViewAdapter.InnerClass>() {
+
+    private var temp = 0
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InnerClass {
         return InnerClass(LayoutInflater.from(context).inflate(R.layout.image_item, parent, false))
     }
@@ -32,6 +35,14 @@ class RecyclerViewAdapter(private val context: Context, private val iFace : Main
             MainActivity.pageNo = MainActivity.pageNo + 1
             iFace.callBack()
         }
+
+        when {
+            position < 10 -> iFace.hideBottomView(false)
+            temp > position -> iFace.hideBottomView(false)
+            else -> iFace.hideBottomView(true)
+        }
+
+        temp = position
 
         var jsonObject = when (MainActivity.v) {
             0 -> MainActivity.homeList[position]

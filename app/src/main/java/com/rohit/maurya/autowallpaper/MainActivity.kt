@@ -23,13 +23,28 @@ class MainActivity : AppCompatActivity() {
         override fun callBack() {
             hitApi()
         }
+
+        override fun hideBottomView(boolean: Boolean) {
+            if (boolean)
+                findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+            else
+                findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+                    View.VISIBLE
+
+        }
     })
     private val recentAdapter = RecyclerViewAdapter(this, object : Interface {
         override fun callBack() {
         }
+
+        override fun hideBottomView(boolean: Boolean) {
+        }
     })
     private val favouriteAdapter = RecyclerViewAdapter(this, object : Interface {
         override fun callBack() {
+        }
+
+        override fun hideBottomView(boolean: Boolean) {
         }
     })
     private lateinit var keyword: String
@@ -71,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     public fun hitApi() {
         val queue = Volley.newRequestQueue(this)
         val url = "$baseUrl$keyword&page=$pageNo"
-        Log.e("urlIs", url)
+        //Log.e("urlIs", url)
 
         if (tempString.contentEquals(url) || loadMore.not())
             return
@@ -164,7 +179,8 @@ class MainActivity : AppCompatActivity() {
         var loadMore: Boolean = true
     }
 
-    public interface Interface {
+    interface Interface {
         fun callBack()
+        fun hideBottomView(boolean: Boolean)
     }
 }
