@@ -9,6 +9,7 @@
         android:layout_height="300dp"
         android:src="@drawable/ic_launcher_foreground"
         android:background="@drawable/border"
+        android:clickable="true"
         android:padding="1dp"
         android:adjustViewBounds="true"
         android:scaleType="fitXY" />

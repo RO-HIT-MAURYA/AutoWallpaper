@@ -10,6 +10,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.realm.Realm
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -25,34 +26,36 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun hideBottomView(boolean: Boolean) {
-            if (boolean)
-                findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
-            else
-                findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-                    View.VISIBLE
-
+            handleHideBottomView(boolean)
         }
     })
+
     private val recentAdapter = RecyclerViewAdapter(this, object : Interface {
         override fun callBack() {
         }
 
         override fun hideBottomView(boolean: Boolean) {
+            handleHideBottomView(boolean)
         }
     })
+
     private val favouriteAdapter = RecyclerViewAdapter(this, object : Interface {
         override fun callBack() {
         }
 
         override fun hideBottomView(boolean: Boolean) {
+            handleHideBottomView(boolean)
         }
     })
+
     private lateinit var keyword: String
     private var tempString = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Realm.init(this)
 
         decideDayWiseKeyword()
         handleBottomNavigation()
@@ -83,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         favouriteRecyclerView.adapter = favouriteAdapter
     }
 
-    public fun hitApi() {
+    fun hitApi() {
         val queue = Volley.newRequestQueue(this)
         val url = "$baseUrl$keyword&page=$pageNo"
         //Log.e("urlIs", url)
@@ -157,6 +160,9 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RecyclerView>(R.id.recentRecyclerView).visibility = View.VISIBLE
                     findViewById<RecyclerView>(R.id.favouriteRecyclerView).visibility = View.GONE
                     v = 1
+                    recentList.clear()
+                    updateLists(RealmHelper.getRecent())
+                    Log.e("arrayIs", RealmHelper.getRecent().toString())
                     true
                 }
                 else -> {
@@ -168,6 +174,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun handleHideBottomView(boolean: Boolean) {
+        if (boolean)
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
+        else
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+                View.VISIBLE
     }
 
     companion object {
