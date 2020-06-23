@@ -44,14 +44,12 @@ class RecyclerViewAdapter(private val context: Context, private val iFace: MainA
 
         temp = position
 
-        var jsonObject = when (MainActivity.v) {
+        var string = when (MainActivity.v) {
             0 -> MainActivity.homeList[position]
             1 -> MainActivity.recentList[position]
             else -> MainActivity.favouriteList[position]
         }
 
-        jsonObject = jsonObject.get("src") as JSONObject
-        val string = jsonObject.getString("portrait")
         if (string.isNotEmpty()) {
             Picasso.get().load(string).placeholder(R.drawable.tenor).into(holder.imageView)
             holder.imageView.tag = string

@@ -124,22 +124,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateLists(jsonArray: JSONArray) {
+        var jsonObject: JSONObject
         for (i in 0..jsonArray.length() - 1) {
             when (v) {
                 0 -> {
-                    homeList.add(jsonArray[i] as JSONObject)
+                    jsonObject = jsonArray[i] as JSONObject
+                    jsonObject = jsonObject.get("src") as JSONObject
+                    val string = jsonObject.getString("portrait")
+                    homeList.add(string)
                     if (i == jsonArray.length() - 1)
                         homeAdapter.notifyDataSetChanged()
                 }
                 1 -> {
-                    recentList.add(jsonArray[i] as JSONObject)
-                    if (i == jsonArray.length() - 1)
-                        recentAdapter.notifyDataSetChanged()
+
+                    recentAdapter.notifyDataSetChanged()
                 }
                 else -> {
-                    favouriteList.add(jsonArray[i] as JSONObject)
-                    if (i == jsonArray.length() - 1)
-                        favouriteAdapter.notifyDataSetChanged()
+
+                    favouriteAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -187,9 +189,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         var v = 0
         var pageNo = 0
-        var homeList = ArrayList<JSONObject>()
-        var recentList = ArrayList<JSONObject>()
-        var favouriteList = ArrayList<JSONObject>()
+        var homeList = ArrayList<String>()
+        var recentList = ArrayList<String>()
+        var favouriteList = ArrayList<String>()
         var loadMore: Boolean = true
     }
 

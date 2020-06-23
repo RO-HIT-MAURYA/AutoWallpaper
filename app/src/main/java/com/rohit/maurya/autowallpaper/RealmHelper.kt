@@ -10,7 +10,7 @@ class RealmHelper {
         fun storeDataIntoDb(string: String) {
             val realm = Realm.getDefaultInstance()
 
-            val l = realm.where(ImageModal::class.java).equalTo("src", string).count()
+            val l = realm.where(ImageModal::class.java).equalTo("imgUrl", string).count()
 
             if (l > 0)
                 return
@@ -18,7 +18,7 @@ class RealmHelper {
             realm.beginTransaction()
 
             val imageModal = realm.createObject(ImageModal::class.java)
-            imageModal.src = string
+            imageModal.imgUrl = string
 
             realm.commitTransaction()
         }

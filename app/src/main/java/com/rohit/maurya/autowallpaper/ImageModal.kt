@@ -1,19 +1,18 @@
 package com.rohit.maurya.autowallpaper
 
-class ImageModal {
+import io.realm.RealmObject
+import java.sql.Blob
+
+open class ImageModal : RealmObject() {
     var imgUrl: String = ""
-        set(value) {
-            imgUrl = value
-        }
+
 
     var isRecent: Boolean = false
-        set(value) {
-            isRecent = value
-        }
+
 
     var isFav: Boolean = false
-        set(value) {
-            isFav = value
-        }
+
+
+    var base64: String = ""
 
 }
