@@ -125,25 +125,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateLists(jsonArray: JSONArray) {
         var jsonObject: JSONObject
+
         for (i in 0..jsonArray.length() - 1) {
-            when (v) {
-                0 -> {
-                    jsonObject = jsonArray[i] as JSONObject
-                    jsonObject = jsonObject.get("src") as JSONObject
-                    val string = jsonObject.getString("portrait")
-                    homeList.add(string)
-                    if (i == jsonArray.length() - 1)
-                        homeAdapter.notifyDataSetChanged()
-                }
-                1 -> {
-
-                    recentAdapter.notifyDataSetChanged()
-                }
-                else -> {
-
-                    favouriteAdapter.notifyDataSetChanged()
-                }
-            }
+            jsonObject = jsonArray[i] as JSONObject
+            jsonObject = jsonObject.get("src") as JSONObject
+            val string = jsonObject.getString("portrait")
+            homeList.add(string)
+            if (i == jsonArray.length() - 1)
+                homeAdapter.notifyDataSetChanged()
         }
     }
 
@@ -163,7 +152,10 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RecyclerView>(R.id.favouriteRecyclerView).visibility = View.GONE
                     v = 1
                     recentList.clear()
-                    updateLists(RealmHelper.getRecent())
+
+                    recentList = RealmHelper.getRecent()
+                    recentAdapter.notifyDataSetChanged()
+
                     Log.e("arrayIs", RealmHelper.getRecent().toString())
                     true
                 }

@@ -10,7 +10,8 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import java.lang.Exception
 
-class ImageActivity : AppCompatActivity() {
+class ImageActivity : AppCompatActivity()
+{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)

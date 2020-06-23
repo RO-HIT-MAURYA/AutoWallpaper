@@ -55,7 +55,7 @@ class RecyclerViewAdapter(private val context: Context, private val iFace: MainA
             holder.imageView.tag = string
             holder.imageView.setOnClickListener {
                 var string : String = it.tag as String
-                val intent : Intent = Intent(context,ImageActivity::class.java)
+                val intent = Intent(context,ImageActivity::class.java)
                 intent.putExtra("url",string)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
