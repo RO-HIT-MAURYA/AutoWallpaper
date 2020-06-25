@@ -13,18 +13,22 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".ImageActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
 
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
     </application>

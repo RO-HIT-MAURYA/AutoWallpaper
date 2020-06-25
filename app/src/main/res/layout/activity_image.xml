@@ -12,4 +12,16 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"/>
 
+    <ImageView
+        android:id="@+id/iV"
+        android:layout_width="?actionBarSize"
+        android:layout_height="?actionBarSize"
+        android:src="@drawable/ic_twotone_favorite_24"
+        android:tint="@color/colorPrimary"
+        android:layout_marginTop="27dp"
+        android:clickable="true"
+        android:onClick="onFavClick"
+        android:padding="11dp"
+        android:layout_gravity="end"/>
+
 </FrameLayout>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.Response
@@ -20,6 +21,7 @@ import kotlin.collections.HashMap
 class MainActivity : AppCompatActivity() {
 
     private var baseUrl = "https://api.pexels.com/v1/search?query="
+    private lateinit var textView: TextView
     private val homeAdapter = RecyclerViewAdapter(this, object : Interface {
         override fun callBack() {
             hitApi()
@@ -56,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Realm.init(this)
+
+        textView = findViewById(R.id.textView)
 
         decideDayWiseKeyword()
         handleBottomNavigation()
@@ -104,6 +108,8 @@ class MainActivity : AppCompatActivity() {
                     val jsonArray = response.getJSONArray("photos")
                     loadMore = jsonArray.length() != 0
 
+                    textView.visibility = View.GONE
+
                     updateLists(jsonArray)
                 }
 
@@ -144,6 +150,15 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RecyclerView>(R.id.recentRecyclerView).visibility = View.GONE
                     findViewById<RecyclerView>(R.id.favouriteRecyclerView).visibility = View.GONE
                     v = 0
+
+                    if (homeList.size == 0) {
+                        textView.visibility = View.VISIBLE
+                        textView.text =
+                            "Please check your internet.\n No worry you can still view your saved images."
+                    } else
+                        textView.visibility = View.GONE
+
+
                     true
                 }
                 R.id.recentItem -> {
@@ -151,9 +166,15 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RecyclerView>(R.id.recentRecyclerView).visibility = View.VISIBLE
                     findViewById<RecyclerView>(R.id.favouriteRecyclerView).visibility = View.GONE
                     v = 1
-                    recentList.clear()
 
+                    recentList.clear()
                     recentList = RealmHelper.getRecent()
+                    if (recentList.size == 0) {
+                        textView.visibility = View.VISIBLE
+                        textView.text = "Nothing is view yet"
+                    } else
+                        textView.visibility = View.GONE
+
                     recentAdapter.notifyDataSetChanged()
 
                     Log.e("arrayIs", RealmHelper.getRecent().toString())
@@ -164,6 +185,17 @@ class MainActivity : AppCompatActivity() {
                     findViewById<RecyclerView>(R.id.recentRecyclerView).visibility = View.GONE
                     findViewById<RecyclerView>(R.id.favouriteRecyclerView).visibility = View.VISIBLE
                     v = 2
+
+                    favouriteList.clear()
+                    favouriteList = RealmHelper.getFavourite()
+                    if (favouriteList.size == 0) {
+                        textView.visibility = View.VISIBLE
+                        textView.text = "Nothing is added to favourite"
+                    } else
+                        textView.visibility = View.GONE
+
+                    favouriteAdapter.notifyDataSetChanged()
+
                     true
                 }
             }
@@ -185,6 +217,9 @@ class MainActivity : AppCompatActivity() {
         var recentList = ArrayList<String>()
         var favouriteList = ArrayList<String>()
         var loadMore: Boolean = true
+
+        var imgUrl = ""
+        var position = 0
     }
 
     interface Interface {
