@@ -2,15 +2,17 @@ package com.rohit.maurya.autowallpaper
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
-import kotlinx.android.synthetic.main.activity_image.*
-import java.lang.Exception
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class ImageActivity : AppCompatActivity() {
     lateinit var str: String
@@ -70,5 +72,32 @@ class ImageActivity : AppCompatActivity() {
             imageView.setColorFilter(resources.getColor(R.color.colorPrimary))
 
 
+    }
+
+    fun onDlClick(view: View) {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bM.compress(Bitmap.CompressFormat.WEBP, 100, byteArrayOutputStream)
+        val bytes: ByteArray = byteArrayOutputStream.toByteArray()
+        try {
+            var path = Environment.getExternalStorageDirectory()
+                .toString() + "//AutoWallpaper"
+            var file = File(path)
+            if (!file.exists()) {
+                file.mkdirs()
+            }
+            path = "$path//${System.currentTimeMillis().toString()+".WEBP"}"
+            file = File(path)
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+            val stream = FileOutputStream(path)
+            stream.write(bytes)
+            stream.close()
+
+            Log.e("statusIs","successful")
+        } catch (e1: Exception) {
+            e1.printStackTrace()
+            Log.e("errorIs",e1.toString())
+        }
     }
 }
