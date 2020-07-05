@@ -15,4 +15,6 @@ open class ImageModal : RealmObject() {
 
     var base64: String = ""
 
+    var time: Long = 0
+
 }

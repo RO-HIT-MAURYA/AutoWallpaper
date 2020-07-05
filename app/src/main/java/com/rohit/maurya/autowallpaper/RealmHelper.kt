@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.Sort
 import java.io.ByteArrayOutputStream
 
 class RealmHelper {
@@ -23,6 +24,7 @@ class RealmHelper {
             val imageModal = realm.createObject(ImageModal::class.java)
             imageModal.imgUrl = string
             imageModal.isRecent = true
+            imageModal.time = System.currentTimeMillis()
 
             realm.commitTransaction()
         }
@@ -30,8 +32,9 @@ class RealmHelper {
         fun getRecent(): ArrayList<String> {
             val arrayList: ArrayList<String> = ArrayList()
 
-            val realmResult: RealmResults<ImageModal> =
+            var realmResult: RealmResults<ImageModal> =
                 realm.where(ImageModal::class.java).equalTo("isRecent", true).findAll()
+            realmResult = realmResult.sort("time", Sort.DESCENDING)
             for (i in 0 until realmResult.size)
                 realmResult[i]?.imgUrl?.let { arrayList.add(it) }
 

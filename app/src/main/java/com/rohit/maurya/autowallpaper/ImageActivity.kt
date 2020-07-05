@@ -6,10 +6,13 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -26,14 +29,36 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
 
+        getAndSetImage()
+
+        handleFloatingButton()
+
+        reloadImageIfNotLoaded()
+    }
+
+    private val handler = Handler()
+    private lateinit var runnable: Runnable
+    private fun reloadImageIfNotLoaded() {
+        runnable = Runnable {
+            handler.postDelayed(runnable, 1230)
+            if (this::bM.isInitialized)
+                handler.removeCallbacks(runnable)
+            else
+                getAndSetImage()
+        }
+        runnable.run()
+    }
+
+    private fun getAndSetImage() {
+
         val imageView: ImageView = findViewById(R.id.imageView)
 
         str = intent.getStringExtra("url")
 
         if (str.isNotEmpty()) {
             if (RealmHelper.isFavourite(str)) {
-                var iV: ImageView = findViewById(R.id.iV)
-                iV.setColorFilter(resources.getColor(R.color.colorRed))
+                val iV: ImageView = findViewById(R.id.iV)
+                iV.setColorFilter(ContextCompat.getColor(this, R.color.colorRed))
 
                 imageView.setImageBitmap(RealmHelper.getBitmap(str))
             } else {
@@ -57,34 +82,32 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
                 RealmHelper.storeDataIntoDb(str)
             }
         }
-
-        handleFloatingButton()
     }
 
     private fun handleFloatingButton() {
         val lock: FloatingActionButton = findViewById(R.id.lockScreenButton)
-        lock.colorNormal = resources.getColor(R.color.colorPrimary)
-        lock.colorPressed = resources.getColor(R.color.colorPrimaryDark)
+        lock.colorNormal = ContextCompat.getColor(this, R.color.colorPrimary)
+        lock.colorPressed = ContextCompat.getColor(this, R.color.colorPrimaryDark)
         lock.setOnClickListener(this)
 
         val sys: FloatingActionButton = findViewById(R.id.systemScreenButton)
-        sys.colorNormal = resources.getColor(R.color.colorPrimary)
-        sys.colorPressed = resources.getColor(R.color.colorPrimaryDark)
+        lock.colorNormal = ContextCompat.getColor(this, R.color.colorPrimary)
+        lock.colorPressed = ContextCompat.getColor(this, R.color.colorPrimaryDark)
         sys.setOnClickListener(this)
     }
 
     fun onFavClick(view: View) {
-        RealmHelper.updateFavourite(str)
-
-        if (bM == null)
+        if (!this::bM.isInitialized)
             return
 
+        RealmHelper.updateFavourite(str)
+
         val imageView: ImageView = view as ImageView
-        if (RealmHelper.isFavourite(str))
-        {
+        if (RealmHelper.isFavourite(str)) {
             RealmHelper.storeBase64(str, bM, object : MainActivity.Interface {
                 override fun callBack() {
                     imageView.setColorFilter(resources.getColor(R.color.colorRed))
+                    showToastMessage("Image saved as favourite")
                 }
 
                 override fun hideBottomView(boolean: Boolean) {
@@ -96,9 +119,12 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun onDlClick(view: View) {
+    private fun showToastMessage(s: String) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show()
+    }
 
-        if (bM == null)
+    fun onDlClick(view: View) {
+        if (!this::bM.isInitialized)
             return
 
         val byteArrayOutputStream = ByteArrayOutputStream()
@@ -120,6 +146,7 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
             stream.write(bytes)
             stream.close()
 
+            showToastMessage("Image downloaded successfully")
             Log.e("statusIs", "successful")
         } catch (e1: Exception) {
             e1.printStackTrace()
@@ -128,8 +155,6 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if (bM == null)
-            return
 
         val byteArrayOutputStream = ByteArrayOutputStream()
         bM.compress(Bitmap.CompressFormat.WEBP, 100, byteArrayOutputStream)
@@ -139,13 +164,18 @@ class ImageActivity : AppCompatActivity(), View.OnClickListener {
         if (v?.id == R.id.lockScreenButton) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 wallpaperManager.setStream(b, null, true, WallpaperManager.FLAG_LOCK)
+                showToastMessage("Lock screen wallpaper is changed successfully.")
             }
-        }
-        else
-        {
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 wallpaperManager.setStream(b, null, true, WallpaperManager.FLAG_SYSTEM)
+                showToastMessage("System screen wallpaper is changed successfully.")
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(runnable)
     }
 }
